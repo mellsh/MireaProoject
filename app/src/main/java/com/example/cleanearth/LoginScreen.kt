@@ -8,13 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,7 +21,8 @@ import androidx.compose.ui.draw.clip
 
 @Composable
 fun LoginScreen(
-    onLoginClicked: () -> Unit = {} // 로그인 완료 후 호출
+    onLoginClicked: (String, String) -> Unit = { _, _ -> },
+    onSignUpClick: () -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -52,7 +47,6 @@ fun LoginScreen(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        // 이메일 입력
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -79,7 +73,6 @@ fun LoginScreen(
                 .padding(bottom = 16.dp)
         )
 
-        // 비밀번호 입력
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -117,7 +110,7 @@ fun LoginScreen(
         }
 
         Button(
-            onClick = { /* 로그인 여부 판단
+            onClick = {
                 when {
                     email.isBlank() || password.isBlank() -> {
                         errorMessage = "모든 항목을 입력해주세요."
@@ -126,10 +119,10 @@ fun LoginScreen(
                     else -> {
                         errorMessage = ""
                         Log.d("LoginScreen", "로그인 시도: 이메일=$email")
-                        onLoginClicked()
+                        onLoginClicked(email, password)
                     }
                 }
-           */ },
+            },
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = darkGreen),
             modifier = Modifier
@@ -140,6 +133,20 @@ fun LoginScreen(
         ) {
             Text("로그인", style = MaterialTheme.typography.titleMedium)
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = { onSignUpClick() },
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .border(2.dp, darkGreen, RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(12.dp))
+        ) {
+            Text("회원가입", style = MaterialTheme.typography.titleMedium, color = darkGreen)
+        }
     }
 }
-

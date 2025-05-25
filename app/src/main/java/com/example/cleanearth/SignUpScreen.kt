@@ -1,34 +1,25 @@
 package com.example.cleanearth
 
-import android.util.Log.d
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
 
 @Composable
 fun SignUpScreen(
-    onNextClicked: () -> Unit = {} // 이동은 나중에 연결할 예정
+    onNextClicked: (String, String) -> Unit // (이메일, 비밀번호)
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
-    val lightGreen = Color(0xFFd4edc9)
     val darkGreen = Color(0xFF4CAF50)
 
     Column(
@@ -55,13 +46,6 @@ fun SignUpScreen(
             onValueChange = { email = it },
             label = { Text("이메일") },
             singleLine = true,
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Email,
-                    contentDescription = "이메일 아이콘",
-                    tint = darkGreen
-                )
-            },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -82,13 +66,6 @@ fun SignUpScreen(
             label = { Text("비밀번호") },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Lock,
-                    contentDescription = "비밀번호 아이콘",
-                    tint = darkGreen
-                )
-            },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
@@ -109,13 +86,6 @@ fun SignUpScreen(
             label = { Text("비밀번호 재확인") },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Lock,
-                    contentDescription = "비밀번호 재확인 아이콘",
-                    tint = darkGreen
-                )
-            },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
@@ -140,7 +110,7 @@ fun SignUpScreen(
         }
 
         Button(
-            onClick = { /* 회원가입 여부 판단
+            onClick = {
                 when {
                     email.isBlank() || password.isBlank() || confirmPassword.isBlank() -> {
                         errorMessage = "모든 항목을 입력해주세요."
@@ -150,17 +120,14 @@ fun SignUpScreen(
                     }
                     else -> {
                         errorMessage = ""
-                        onNextClicked() // 나중에 화면 이동 연결할 부분
+                        onNextClicked(email, password)
                     }
                 }
-            */},
-            shape = RoundedCornerShape(12.dp),
+            },
             colors = ButtonDefaults.buttonColors(containerColor = darkGreen),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .border(2.dp, darkGreen, RoundedCornerShape(12.dp))
-                .clip(RoundedCornerShape(12.dp))
         ) {
             Text("다음", style = MaterialTheme.typography.titleMedium)
         }
