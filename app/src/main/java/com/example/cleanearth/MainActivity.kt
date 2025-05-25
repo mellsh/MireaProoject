@@ -24,9 +24,8 @@ class MainActivity : ComponentActivity() {
 //                SignUpScreen()
 //                ProfileScreen()
 //                LoginScreen()
-                MainScreen()
+                  MainScreen()
             }
         }
     }
 }
-
