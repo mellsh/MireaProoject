@@ -36,7 +36,7 @@ fun StartScreen() {
 //            modifier = Modifier.fillMaxSize()
 //        )
 
-        // 반투명 녹색 오버레이 + 콘텐츠
+        // 반투명 녹색 오버레이 + 콘텐츠z
         Column(
             modifier = Modifier
                 .fillMaxSize()
