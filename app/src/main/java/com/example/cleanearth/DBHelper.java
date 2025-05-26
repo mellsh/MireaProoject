@@ -5,8 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
-    public static final String DB_NAME = "CleanEarth.db";
-    public static final int DB_VERSION = 1;
+    private static final String DB_NAME = "users.db";
+    private static final int DB_VERSION = 1;
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -14,15 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(
-                "CREATE TABLE users (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "email TEXT UNIQUE," +
-                        "password TEXT," +
-                        "name TEXT," +
-                        "gender TEXT," +
-                        "birthDate TEXT)"
-        );
+        db.execSQL("CREATE TABLE users (email TEXT PRIMARY KEY, password TEXT, name TEXT, gender TEXT, birthDate TEXT)");
     }
 
     @Override

@@ -109,7 +109,7 @@ fun StartScreen() {
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     modifier = Modifier.padding(vertical = 2.dp)
-                    )
+                )
             }
         }
     }

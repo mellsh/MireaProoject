@@ -6,15 +6,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class UserRepository {
-    private DBHelper dbHelper;
+    private final SQLiteDatabase db;
 
     public UserRepository(Context context) {
-        dbHelper = new DBHelper(context);
+        DBHelper dbHelper = new DBHelper(context);
+        db = dbHelper.getWritableDatabase();
     }
 
-    // 회원가입 - 이메일/비번/개인정보 모두 저장
     public boolean signUp(String email, String password, String name, String gender, String birthDate) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("users", null, "email=?", new String[]{email}, null, null, null);
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return false; // 이미 가입됨
+        }
+        cursor.close();
+
         ContentValues values = new ContentValues();
         values.put("email", email);
         values.put("password", password);
@@ -22,23 +28,17 @@ public class UserRepository {
         values.put("gender", gender);
         values.put("birthDate", birthDate);
         long result = db.insert("users", null, values);
-        db.close();
         return result != -1;
     }
 
-    // 로그인
     public boolean login(String email, String password) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query("users", null, "email=? AND password=?", new String[]{email, password}, null, null, null);
-        boolean loggedIn = cursor.moveToFirst();
+        boolean exists = cursor.moveToFirst();
         cursor.close();
-        db.close();
-        return loggedIn;
+        return exists;
     }
 
-    // 이메일로 개인정보 조회
     public Cursor getProfile(String email) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         return db.query("users", null, "email=?", new String[]{email}, null, null, null);
     }
 }

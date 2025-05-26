@@ -10,7 +10,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,16 +31,12 @@ import androidx.compose.ui.Alignment
 
 @Composable
 fun ProfileScreen(
-    onNextClicked: (String, String, String) -> Unit = { _, _, _ -> },
-    onBackClicked: () -> Unit = {},
-    initialName: String = "",
-    initialGender: String = "",
-    initialBirthDate: String = "",
-    readOnly: Boolean = false
+    onNextClicked: () -> Unit = {}, // 다음 화면으로 이동할 콜백
+    onBackClicked: () -> Unit = {}  // 이전 화면으로 돌아갈 콜백
 ) {
-    var name by remember { mutableStateOf(initialName) }
-    var gender by remember { mutableStateOf(initialGender) }
-    var birthDate by remember { mutableStateOf(initialBirthDate) }
+    var name by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var birthDate by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var genderMenuExpanded by remember { mutableStateOf(false) }
 
@@ -57,9 +61,10 @@ fun ProfileScreen(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
+        // 이름 입력
         OutlinedTextField(
             value = name,
-            onValueChange = { if (!readOnly) name = it },
+            onValueChange = { name = it },
             label = { Text("이름") },
             singleLine = true,
             trailingIcon = {
@@ -78,62 +83,56 @@ fun ProfileScreen(
                 cursorColor = darkGreen,
                 focusedLabelColor = darkGreen
             ),
-            enabled = !readOnly,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        ) {
+        // 성별 선택 (DropdownMenu 사용)
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)) {
             OutlinedTextField(
                 value = gender,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("성별") },
                 trailingIcon = {
-                    if (!readOnly) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = "성별 선택 아이콘",
-                            tint = darkGreen,
-                            modifier = Modifier.clickable { genderMenuExpanded = true }
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.ArrowDropDown,
+                        contentDescription = "성별 선택 아이콘",
+                        tint = darkGreen,
+                        modifier = Modifier.clickable { genderMenuExpanded = true }
+                    )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = darkGreen,
                     cursorColor = darkGreen,
                     focusedLabelColor = darkGreen
                 ),
-                enabled = !readOnly,
                 modifier = Modifier.fillMaxWidth()
             )
-            if (!readOnly) {
-                DropdownMenu(
-                    expanded = genderMenuExpanded,
-                    onDismissRequest = { genderMenuExpanded = false },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    genderOptions.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                gender = option
-                                genderMenuExpanded = false
-                            }
-                        )
-                    }
+            DropdownMenu(
+                expanded = genderMenuExpanded,
+                onDismissRequest = { genderMenuExpanded = false },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                genderOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            gender = option
+                            genderMenuExpanded = false
+                        }
+                    )
                 }
             }
         }
 
+        // 생년월일 입력
         OutlinedTextField(
             value = birthDate,
-            onValueChange = { if (!readOnly) birthDate = it },
+            onValueChange = { birthDate = it },
             label = { Text("생년월일 (YYYY-MM-DD)") },
             singleLine = true,
             trailingIcon = {
@@ -152,7 +151,6 @@ fun ProfileScreen(
                 cursorColor = darkGreen,
                 focusedLabelColor = darkGreen
             ),
-            enabled = !readOnly,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
@@ -167,36 +165,30 @@ fun ProfileScreen(
             )
         }
 
-        if (!readOnly) {
-            Button(
-                onClick = {
-                    when {
-                        name.isBlank() || gender.isBlank() || birthDate.isBlank() -> {
-                            errorMessage = "모든 항목을 입력해주세요."
-                        }
-                        else -> {
-                            errorMessage = ""
-                            onNextClicked(name, gender, birthDate)
-                        }
+        // 다음 버튼
+        Button(
+            onClick = { /*  개인정보 입력 여부 판단
+                when {
+                    name.isBlank() || gender.isBlank() || birthDate.isBlank() -> {
+                        errorMessage = "모든 항목을 입력해주세요."
+                        Log.d("ProfileScreen", errorMessage)
                     }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = darkGreen),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Text("완료", style = MaterialTheme.typography.titleMedium)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onBackClicked,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Text("뒤로가기", style = MaterialTheme.typography.titleMedium, color = darkGreen)
-            }
+                    else -> {
+                        errorMessage = ""
+                        Log.d("ProfileScreen", "개인정보 입력 완료: 이름=$name, 성별=$gender, 생년월일=$birthDate")
+                        onNextClicked()
+                    }
+                }
+           */ },
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = darkGreen),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .border(2.dp, darkGreen, RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(12.dp))
+        ) {
+            Text("다음", style = MaterialTheme.typography.titleMedium)
         }
     }
 }
