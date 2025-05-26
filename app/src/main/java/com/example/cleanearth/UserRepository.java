@@ -1,7 +1,7 @@
 package com.example.cleanearth;
 
-import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -17,10 +17,9 @@ public class UserRepository {
         Cursor cursor = db.query("users", null, "email=?", new String[]{email}, null, null, null);
         if (cursor.moveToFirst()) {
             cursor.close();
-            return false; // 이미 가입됨
+            return false;
         }
         cursor.close();
-
         ContentValues values = new ContentValues();
         values.put("email", email);
         values.put("password", password);
